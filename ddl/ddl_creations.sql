@@ -36,6 +36,7 @@ CREATE TABLE transactions (
     amount             NUMERIC(12,2) NOT NULL,
     transaction_type   TEXT NOT NULL,
     description        TEXT,
+    merchant_tag       TEXT,
 
     CONSTRAINT fk_transactions_account
         FOREIGN KEY (account_id) REFERENCES accounts (account_id)
@@ -62,5 +63,34 @@ BEGIN
         AND t.amount = s.amount
         AND COALESCE(t.description,'') = COALESCE(s.description,'')
     WHERE t.transaction_id IS NULL;
+
+    update transactions
+    set merchant_tag =        
+    CASE
+        when upper(description) like '%PAYMENT%' and amount > 0
+           then 'CC Payment'
+        when upper(description) like '%DOORDASH%' then 'Doordash'
+        when upper(description) like '%WALMART%' or upper(description) like '%WM SUPERCENTER%' or upper(description) like '%WAL-MART%' then 'Walmart'
+        when upper(description) like '%EVERYDAY%' then 'Everyday App'
+        when upper(description) like '%COVETRUS%' then 'Covetrus - Pet Meds'
+        when upper(description) like '%FIGO%' then 'Figo - Pet Insurance'
+        when upper(description) like '%LIFEPOINT%' then 'Lifepoint - Tithes'
+        when upper(description) like '%KROGER%' then 'Kroger'
+        when (upper(description) like '%NATIONWIDE%') or (upper(description) like '%AMAZON%' and amount > 0) or upper(description) like '%COMPONE%' and amount > 0 then 'Payroll'
+        when upper(description) like '%CHEWY%' then 'Chewy - Pet Supplies'
+        when upper(description) like '%CARDINAL LAWNS%' then 'Cardinal Lawns'
+        when upper(description) like '%COSTCO TRAVEL%' then 'COSTCO Travel'
+        when upper(description) like '%COSTCO WHSE%' then 'COSTCO'
+        when upper(description) like '%DIVIDEND DEPOSIT%' 
+           or upper(description) like '%ANNUAL PERCENTAGE YIELD EARNED%' 
+           or upper(description) like '%DIVIDEND DEPOSIT%' 
+               then 'Account Interest earnings'
+        when upper(description) like '%WORTHINGTON WOODS%' then 'Worthington Woods - Vet'
+        when upper(description) like '%AMAZON%' and amount < 0 then 'Amazon Marketplace'
+        when upper(description) like '%BLACK WING%' or upper(description) like '%CARDINAL CENTER%'  then 'Sporting Clays'
+        when upper(description) like '%COOPERSHAWK%' then 'Coopers Hawk - Wine Membership'
+           else description
+    END;
+
 END;
 $$;
