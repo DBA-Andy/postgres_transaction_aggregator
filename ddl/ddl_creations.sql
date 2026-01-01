@@ -235,6 +235,7 @@ BEGIN
         when upper(description) like '%MIDWEST LOAN SER%'
              then 'Mortgage'
         when (upper(description) like '%AMAZON%' and amount < 0)
+          OR upper(description) like '%EBAY%'
           OR upper(description) like '%TARGET%'
           or upper(description) like '%TBE*BRADFORD ONLINE%'
           or upper(description) like 'SP%' 
