@@ -89,7 +89,7 @@ BEGIN
         when upper(description) like '%AMAZON%' and amount < 0 then 'Amazon Marketplace'
         when upper(description) like '%BLACK WING%' or upper(description) like '%CARDINAL CENTER%'  then 'Sporting Clays'
         when upper(description) like '%COOPERSHAWK%' then 'Coopers Hawk - Wine Membership'
-           else description
+           else null
     END;
 
 END;
