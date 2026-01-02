@@ -326,8 +326,7 @@ BEGIN
              then 'Utlities'
         else null
     END;
-
-    vacuum full;
-
+    
 END;
+VACUUM FULL;
 $$;

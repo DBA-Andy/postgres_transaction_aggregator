@@ -37,6 +37,11 @@ FILES = [
 
     # Citi
     ("citi_costcoanywhere.csv", "Citi", "Visa", "Credit Card", 0, 16),
+   
+
+    # Chase
+    ("chase_freedom.csv", "Chase", "Visa", "Credit Card", 0, 17),
+    ("chase_prime.csv", "Chase", "Visa", "Credit Card", 0, 18),
 ]
 
 ACCOUNTS_OUT = "accounts.csv"
@@ -178,6 +183,11 @@ for filename, institution, account_name, account_type, skip_before_header, accou
                     amount = abs(credit_amt)
                 else:
                     continue  # no financial impact
+            # ---------------- Chase ----------------
+            elif institution == "Chase":
+                date = parse_date(row[header_map["transaction date"]])
+                amount = to_float(row[header_map["amount"]])
+                description = row[header_map["description"]]
 
             else:
                 continue
@@ -237,7 +247,7 @@ conn.autocommit = False
 
 try:
     with conn.cursor() as cur:
-        cur.execute("TRUNCATE TABLE transactions_stage restart identity cascade;")
+        cur.execute("TRUNCATE TABLE transactions_stage cascade;")
         cur.execute("TRUNCATE TABLE accounts_stage cascade;")
 
         print("Loading accounts table...")
